@@ -52,14 +52,20 @@ namespace ObjectWorker
                     }
                 }
             }
+
+            //Deklaracja listy
+            this.Visited = new Dictionary<uint, Data>();
         }
 
         #endregion
 
         #region Methods
 
-        private void PointAnalysis(int a_iX, int a_iY, uint a_uClosed, uint a_uPoint)
+        private bool PointAnalysis(int a_iX, int a_iY, uint a_uClosed,ref uint a_uPoint, int[,,] a_oObstacles, int a_iSearch)
         {
+            //Deklaracja mziennych
+            bool _bIsFiding = true;
+
             //Sprawdza czy miejsce w tablicy nie jest przeszkodą do ominiecią oraz czy nie jest to wartość już sprawdzona
             if(this.PathBoard[a_iX, a_iY] >= 0 && this.PathBoard[a_iX, a_iY] > a_uPoint)
             {
@@ -73,25 +79,38 @@ namespace ObjectWorker
                 };
 
                 //Dodanie punmtu do listy
-                Visited.Add(a_uPoint, point);
+                this.Visited.Add(a_uPoint, point);
+
+                //Przejście do nastepnego punktu
+                a_uPoint++;
+
+                //Znalezienie szukanego elementu
+                if (a_oObstacles[a_iX - 1, a_iY - 1, 0] == a_iSearch)
+                {
+                    _bIsFiding = false;
+                }
             }
+
+            //Zwraca wartość boolowską
+            return _bIsFiding;
         }
 
         public void FindPath(int a_iStartX, int a_iStartY, int[,,] a_oObstacles, int a_iSearch)
         {
-            //deklaracja zmiennych
+            //Deklaracja zmiennych
             a_iStartX += 1;//Przestawienie względem większej tablicy PathBoard
             a_iStartY += 1;
             uint _uClosed = 0;//Punkty zamknięte
             uint _uPoint = 1;
             int _iX;
             int _iY;
+            bool _bIsFiding = true;//Sprawdza czy metoda jeszcze nie znalazła szukanego obiektu
 
             //Zapisanie miejsca startowego
             this.PathBoard[a_iStartX, a_iStartY] = 0;
 
             //Główna pętla
-            while (true)
+            while (_bIsFiding)
             {
                 //Ustalenie miejsca punktu, który musi być przeszukiwany jako nastepny
                 if (_uClosed == 0)//Startowo punktem początkowym jest punkt startowy poszukiwań
@@ -105,11 +124,7 @@ namespace ObjectWorker
                     _iY = Visited[_uClosed].Y;
                 }
 
-                //Znalezienie szukanego elementu
-                if (a_oObstacles[_iX - 1, _iY - 1, 0] == a_iSearch)
-                {
-                    break;
-                }
+                
 
                 //Przeszukanie sąsiednich miejsc punktu w 4 strony
                 for (int i = 0; i < 4; i++)
@@ -117,17 +132,23 @@ namespace ObjectWorker
                     switch (i)
                     {
                         case 0://Góra
-                            PointAnalysis(_iX, _iY - 1, _uClosed, _uPoint);
+                            _bIsFiding = PointAnalysis(_iX, _iY - 1, _uClosed, ref _uPoint, a_oObstacles, a_iSearch);
                             break;
                         case 1://Dół
-                            PointAnalysis(_iX, _iY + 1, _uClosed, _uPoint);
+                            _bIsFiding = PointAnalysis(_iX, _iY + 1, _uClosed, ref _uPoint, a_oObstacles, a_iSearch);
                             break;
                         case 2://Prawo
-                            PointAnalysis(_iX + 1, _iY, _uClosed, _uPoint);
+                            _bIsFiding = PointAnalysis(_iX + 1, _iY, _uClosed, ref _uPoint, a_oObstacles, a_iSearch);
                             break;
                         case 3://Lewo
-                            PointAnalysis(_iX - 1, _iY, _uClosed, _uPoint);
+                            _bIsFiding = PointAnalysis(_iX - 1, _iY, _uClosed, ref _uPoint, a_oObstacles, a_iSearch);
                             break;
+                    }
+
+                    //Wyjście ze sprawdzania jeżeli znaleziono szukany obiekt
+                    if (!_bIsFiding)
+                    {
+                        break;
                     }
                 }
 
