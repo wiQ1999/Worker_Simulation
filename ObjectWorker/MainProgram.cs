@@ -9,7 +9,7 @@ namespace ObjectWorker
             //Specyfikacja planszy
             int _iSizeX = 60;
             int _iSizeY = 15;
-            float _fFrequency = 5f;
+            float _fFrequency = 1f;
 
             #region Consol settings
 
@@ -40,6 +40,8 @@ namespace ObjectWorker
 
 
             Dijkstra dijkstra = new Dijkstra(_iSizeX, _iSizeY);
+
+            Console.ReadKey();
 
             dijkstra.FindPath(worker.PosX, worker.PosY, forest.TreesArray, 1);
 

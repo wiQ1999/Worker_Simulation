@@ -5,12 +5,11 @@ using System.Threading;
 
 namespace ObjectWorker
 {
-    struct Data
+    struct Point
     {
         public int X;
         public int Y;
         public uint Neighbor;
-        public uint Distance;
     }
 
     class Dijkstra
@@ -24,7 +23,11 @@ namespace ObjectWorker
         /// <summary>
         /// List of points stores date on a PathBoard
         /// </summary>
-        private Dictionary<uint, Data> Visited { get; set; }
+        private Dictionary<uint, Point> Visited { get; set; }
+        /// <summary>
+        /// List of points stores precise path
+        /// </summary>
+        private Stack<Point> Path { get; set; }
 
         #endregion
 
@@ -54,8 +57,9 @@ namespace ObjectWorker
                 }
             }
 
-            //Deklaracja listy
-            this.Visited = new Dictionary<uint, Data>();
+            //Deklaracja list
+            this.Visited = new Dictionary<uint, Point>();
+            this.Path = new Stack<Point>();
         }
 
         #endregion
@@ -81,12 +85,11 @@ namespace ObjectWorker
             if(this.PathBoard[a_iX, a_iY] >= 0 && this.PathBoard[a_iX, a_iY] > a_uPoint)
             {
                 //Tworzenie nowej przestrzeni danyhc punktu
-                Data point = new Data
+                Point point = new Point
                 {
                     X = a_iX,
                     Y = a_iY,
                     Neighbor = a_uClosed,
-                    Distance = 1//!!DO MODYFIKACJI (METHOD)
                 };
 
                 //Dodanie punmtu do listy
@@ -113,8 +116,12 @@ namespace ObjectWorker
         /// <param name="a_iStartY">Worker Y position</param>
         /// <param name="a_oObstacles">Array represents space of objects</param>
         /// <param name="a_iSearch">Searched object</param>
-        public void FindPath(int a_iStartX, int a_iStartY, int[,,] a_oObstacles, int a_iSearch)
+        public Stack<Point> FindPath(int a_iStartX, int a_iStartY, int[,,] a_oObstacles, int a_iSearch)
         {
+            //Resetowanie list generycznej
+            //this.Visited = null;
+            //this.Path = null;
+
             //Deklaracja zmiennych
             int _iArraySize = ((this.PathBoard.GetLength(0) - 2) * (this.PathBoard.GetLength(1) - 2)) - 1;//Określenie ilości maksymalnyhc punktów na planszy po której może poruszać się Worker
             a_iStartX += 1;//Przestawienie względem większej tablicy PathBoard
@@ -144,8 +151,6 @@ namespace ObjectWorker
                     _iY = Visited[_uClosed].Y;
                 }
 
-                
-
                 //Przeszukanie sąsiednich miejsc punktu w 4 strony
                 for (int i = 0; i < 4; i++)
                 {
@@ -172,15 +177,32 @@ namespace ObjectWorker
                     }
                 }
 
-                //Zamknięcie przeszukanego już punktu
+                //Zamknięcie przeszukanego już punktu i przejście do następnego
                 _uClosed++;
             }
 
-            //!!Komunikat w przypadku gdy nei znaleziono szukanego obiektu na całej planszyXD
-            if(!(_iArraySize >= _uPoint))
+            if(!(_iArraySize >= _uPoint))//!!Komunikat w przypadku gdy nie znaleziono szukanego obiektu na całej planszy
             {
                 Console.WriteLine("Szukany obiekt nie istnieje!");
             }
+            else//Tworzenie trasy po znalezieniu szukanego obiektu
+            {
+                //Zmniejszenie zamknietych o jeden by pozostać na ostatnim punkcie który spotkał poszukiwany obiekt
+                _uClosed--;
+
+                //Tworzenie ścieżki w liście Stack
+                while (_uClosed >= 1)
+                {
+                    //Wstawianie elementów do listy
+                    this.Path.Push(this.Visited[_uClosed]);
+
+                    //Ustawianie poprzednika / sąsiada
+                    _uClosed = this.Visited[_uClosed].Neighbor;
+                }
+            }
+
+            //Zwracanie ścieżki w liście Stack
+            return Path;
         }
 
         #endregion
