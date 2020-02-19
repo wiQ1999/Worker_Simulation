@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace ObjectWorker
 {
@@ -11,6 +12,7 @@ namespace ObjectWorker
         public string[,,] WorkersArray { get; set; }
         public char Name { get; set; }
         public int Power { get; set; }
+        public int Speed { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
         public int SizeX { get; set; }
@@ -25,6 +27,7 @@ namespace ObjectWorker
             //Deklaracja zmiennych
             this.Name = 'W';
             this.Power = 20;
+            this.Speed = 100;
             this.SizeX = x;
             this.SizeY = y;
             this.WorkersArray = new string[x, y, 1];
@@ -59,19 +62,70 @@ namespace ObjectWorker
 
         #region Methods
 
+        private void WorkerInteraction()
+        {
+            //Czas przeznaczony na interakcje z obiektem
+            Thread.Sleep(this.Power * this.Speed);
+        }
+
+        private void WorkerMove(ref Stack<Point> a_Path)
+        {
+            //Zczytanie aktualnego czasu
+            DateTime Date = DateTime.Now;
+
+            //Deklaracja zmiennej o atrybutach punktu oraz usunięcie go z listy
+            var _vPoint = a_Path.Pop();
+
+            //Ustawienie aktualnego miejsca Worker'a
+            Console.SetCursorPosition(this.PosX, this.PosY);
+
+            //Usunięcie Worker'a ze aktualnego miejsca
+            Console.Write(" ");
+
+            //Przesunięcie Worker'a na nastepne pole podane w liście Path
+            Console.SetCursorPosition(_vPoint.X, _vPoint.Y);
+
+            //Umieszczenie Worker'a na nową pozycję na planszy
+            Console.Write(this.Name);
+
+            //Aktualizacja globalnej zmiennej pozycji Worker'a
+            this.PosX = _vPoint.X;
+            this.PosY = _vPoint.Y;
+
+            //Wartość tylko do odczytu czasu który minął na wykonanie operacji
+            TimeSpan Now = DateTime.Now - Date;
+
+            //Sprawdzanie czy wykonano operacje szybciej niż wartość szybkości Worker'a
+            if(Now.Milliseconds < this.Speed)
+            {
+                //Oczekiwanie (szybkość Workera - czas wykonania operacji)
+                Thread.Sleep(this.Speed - Now.Milliseconds);
+            }
+        }
+
+        public Stack<Point> TreeCutting(int[,,] a_oObjects, int a_iSerch)
+        {
+
+            Dijkstra dijkstra = new Dijkstra(this.SizeX, this.SizeY);
+
+            Stack<Point> Path = dijkstra.FindPath(this.PosX, this.PosY, a_oObjects, a_iSerch);
+
+            //Dopóki w liście nie zostanie ostatnia wartość - szukany element
+            while (Path.Count > 1)
+            {
+                WorkerMove(ref Path);
+            }
+
+            //Inerakcja Worker'a z szukanym elementem
+            WorkerInteraction();
+
+            return Path;
+        }
+
         public void DrowWorkers()
         {
-            for(int x = 0; x < this.SizeX; x++)
-            {
-                for (int y = 0; y < this.SizeY; y++)
-                {
-                    if(this.WorkersArray[x, y, 0] != string.Empty)
-                    {
-                        Console.SetCursorPosition(x + 1, y + 1);
-                        Console.Write(this.WorkersArray[x, y, 0]);
-                    }
-                }
-            }
+            Console.SetCursorPosition(this.PosX, this.PosY);
+            Console.Write(this.WorkersArray[this.PosX, this.PosY, 0]);
         }
 
         #endregion

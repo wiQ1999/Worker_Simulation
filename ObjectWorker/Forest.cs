@@ -186,7 +186,7 @@ namespace ObjectWorker
         /// <summary>
         /// Checks each place in an array and writes it on the board
         /// </summary>
-        private void DrawTrees()
+        public void DrawTrees()
         {
             for (int x = 0; x < this.SizeX; x++)
             {

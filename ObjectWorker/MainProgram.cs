@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace ObjectWorker
 {
@@ -32,19 +34,29 @@ namespace ObjectWorker
 
             forest.Trees();
 
-            
+
             Worker worker = new Worker(_iSizeX, _iSizeY, forest.TreesArray);
 
             worker.DrowWorkers();
 
+            //Ilość drzew do ścięcia
+            uint _uTrees = 5;
 
+            //Za każdym razem zmniejsza ilość drzew o 1
+            while (_uTrees-- > 0)
+            {
+                Stack<Point> Path = worker.TreeCutting(forest.TreesArray, 1);
 
-            Dijkstra dijkstra = new Dijkstra(_iSizeX, _iSizeY);
+                //W przypadku gdy nie znaleziono obiektu na planszy oraz ścieżki do niego~~!!
+                if (Path == null)
+                {
+                    break;
+                }
 
-            Console.ReadKey();
+                forest.TreesArray[Path.Peek().X, Path.Peek().Y, 0] = 0;
 
-            dijkstra.FindPath(worker.PosX, worker.PosY, forest.TreesArray, 1);
-
+                forest.DrawTrees();
+            }
 
             Console.ReadKey();
         }

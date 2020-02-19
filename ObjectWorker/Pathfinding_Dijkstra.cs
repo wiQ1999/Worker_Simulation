@@ -73,10 +73,10 @@ namespace ObjectWorker
         /// <param name="a_iY">Point Y position</param>
         /// <param name="a_uClosed">Number of closed / actually point</param>
         /// <param name="a_uPoint">Number of next point</param>
-        /// <param name="a_oObstacles">Array represents space of objects</param>
+        /// <param name="a_oObjects">Array represents space of objects</param>
         /// <param name="a_iSearch">Searched object</param>
         /// <returns>Bool value tells about searching (true - still searching)</returns>
-        private bool PointAnalysis(int a_iX, int a_iY, uint a_uClosed,ref uint a_uPoint, int[,,] a_oObstacles, int a_iSearch)
+        private bool PointAnalysis(int a_iX, int a_iY, uint a_uClosed,ref uint a_uPoint, int[,,] a_oObjects, int a_iSearch)
         {
             //Deklaracja mziennych
             bool _bIsFiding = true;
@@ -99,7 +99,7 @@ namespace ObjectWorker
                 this.PathBoard[a_iX, a_iY] = (int)a_uPoint++;
 
                 //Znalezienie szukanego elementu
-                if (a_oObstacles[a_iX - 1, a_iY - 1, 0] == a_iSearch)
+                if (a_oObjects[a_iX - 1, a_iY - 1, 0] == a_iSearch)
                 {
                     _bIsFiding = false;
                 }
@@ -114,16 +114,16 @@ namespace ObjectWorker
         /// </summary>
         /// <param name="a_iStartX">Worker X position</param>
         /// <param name="a_iStartY">Worker Y position</param>
-        /// <param name="a_oObstacles">Array represents space of objects</param>
+        /// <param name="a_oObjects">Array represents space of objects</param>
         /// <param name="a_iSearch">Searched object</param>
-        public Stack<Point> FindPath(int a_iStartX, int a_iStartY, int[,,] a_oObstacles, int a_iSearch)
+        public Stack<Point> FindPath(int a_iStartX, int a_iStartY, int[,,] a_oObjects, int a_iSearch)
         {
             //Resetowanie list generycznej
             //this.Visited = null;
             //this.Path = null;
 
             //Deklaracja zmiennych
-            int _iArraySize = ((this.PathBoard.GetLength(0) - 2) * (this.PathBoard.GetLength(1) - 2)) - 1;//Określenie ilości maksymalnyhc punktów na planszy po której może poruszać się Worker
+            int _iArrayPlaces = ((this.PathBoard.GetLength(0) - 2) * (this.PathBoard.GetLength(1) - 2)) - 1;//Określenie ilości maksymalnyhc punktów na planszy po której może poruszać się Worker
             a_iStartX += 1;//Przestawienie względem większej tablicy PathBoard
             a_iStartY += 1;
             uint _uClosed = 0;//Punkty zamknięte
@@ -137,7 +137,7 @@ namespace ObjectWorker
 
             //Główna pętla
             //Dopóki nie znalazł elementu oraz dopóki rozmiar tablicy jest wiekszy lub równy odwiedzonym punktom
-            while (_bIsFiding && _iArraySize >= _uPoint)
+            while (_bIsFiding && _iArrayPlaces >= _uPoint)
             {
                 //Ustalenie miejsca punktu, który musi być przeszukiwany jako nastepny
                 if (_uClosed == 0)//Startowo punktem początkowym jest punkt startowy poszukiwań
@@ -157,16 +157,16 @@ namespace ObjectWorker
                     switch (i)
                     {
                         case 0://Góra
-                            _bIsFiding = PointAnalysis(_iX, _iY - 1, _uClosed, ref _uPoint, a_oObstacles, a_iSearch);
+                            _bIsFiding = PointAnalysis(_iX, _iY - 1, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
                             break;
                         case 1://Dół
-                            _bIsFiding = PointAnalysis(_iX, _iY + 1, _uClosed, ref _uPoint, a_oObstacles, a_iSearch);
+                            _bIsFiding = PointAnalysis(_iX, _iY + 1, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
                             break;
                         case 2://Prawo
-                            _bIsFiding = PointAnalysis(_iX + 1, _iY, _uClosed, ref _uPoint, a_oObstacles, a_iSearch);
+                            _bIsFiding = PointAnalysis(_iX + 1, _iY, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
                             break;
                         case 3://Lewo
-                            _bIsFiding = PointAnalysis(_iX - 1, _iY, _uClosed, ref _uPoint, a_oObstacles, a_iSearch);
+                            _bIsFiding = PointAnalysis(_iX - 1, _iY, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
                             break;
                     }
 
@@ -181,11 +181,8 @@ namespace ObjectWorker
                 _uClosed++;
             }
 
-            if(!(_iArraySize >= _uPoint))//!!Komunikat w przypadku gdy nie znaleziono szukanego obiektu na całej planszy
-            {
-                Console.WriteLine("Szukany obiekt nie istnieje!");
-            }
-            else//Tworzenie trasy po znalezieniu szukanego obiektu
+            //Tworzenie trasy po znalezieniu szukanego obiektu
+            if (_iArrayPlaces >= _uPoint)
             {
                 //Zmniejszenie zamknietych o jeden by pozostać na ostatnim punkcie który spotkał poszukiwany obiekt
                 _uClosed--;
