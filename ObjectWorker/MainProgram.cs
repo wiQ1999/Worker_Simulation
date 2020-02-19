@@ -11,7 +11,7 @@ namespace ObjectWorker
 
             int _iSizeX = 24;
             int _iSizeY = 6;
-            float _fFrequency = 1f;
+            float _fFrequency = 2f;
 
 
             Forest forest = new Forest(_iSizeX, _iSizeY, _fFrequency);
