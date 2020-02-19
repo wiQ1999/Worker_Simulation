@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace ObjectWorker
 {
@@ -61,6 +62,16 @@ namespace ObjectWorker
 
         #region Methods
 
+        /// <summary>
+        /// Method that search by given point and stores information in generic list
+        /// </summary>
+        /// <param name="a_iX">Point X position</param>
+        /// <param name="a_iY">Point Y position</param>
+        /// <param name="a_uClosed">Number of closed / actually point</param>
+        /// <param name="a_uPoint">Number of next point</param>
+        /// <param name="a_oObstacles">Array represents space of objects</param>
+        /// <param name="a_iSearch">Searched object</param>
+        /// <returns>Bool value tells about searching (true - still searching)</returns>
         private bool PointAnalysis(int a_iX, int a_iY, uint a_uClosed,ref uint a_uPoint, int[,,] a_oObstacles, int a_iSearch)
         {
             //Deklaracja mziennych
@@ -81,8 +92,8 @@ namespace ObjectWorker
                 //Dodanie punmtu do listy
                 this.Visited.Add(a_uPoint, point);
 
-                //Przejście do nastepnego punktu
-                a_uPoint++;
+                //Zapisanie punktu na tablicy ściezki i przejście do nastepnego punktu (++)
+                this.PathBoard[a_iX, a_iY] = (int)a_uPoint++;
 
                 //Znalezienie szukanego elementu
                 if (a_oObstacles[a_iX - 1, a_iY - 1, 0] == a_iSearch)
@@ -95,9 +106,17 @@ namespace ObjectWorker
             return _bIsFiding;
         }
 
+        /// <summary>
+        /// Method that starts searching path for Worker to given object
+        /// </summary>
+        /// <param name="a_iStartX">Worker X position</param>
+        /// <param name="a_iStartY">Worker Y position</param>
+        /// <param name="a_oObstacles">Array represents space of objects</param>
+        /// <param name="a_iSearch">Searched object</param>
         public void FindPath(int a_iStartX, int a_iStartY, int[,,] a_oObstacles, int a_iSearch)
         {
             //Deklaracja zmiennych
+            int _iArraySize = ((this.PathBoard.GetLength(0) - 2) * (this.PathBoard.GetLength(1) - 2)) - 1;//Określenie ilości maksymalnyhc punktów na planszy po której może poruszać się Worker
             a_iStartX += 1;//Przestawienie względem większej tablicy PathBoard
             a_iStartY += 1;
             uint _uClosed = 0;//Punkty zamknięte
@@ -110,7 +129,8 @@ namespace ObjectWorker
             this.PathBoard[a_iStartX, a_iStartY] = 0;
 
             //Główna pętla
-            while (_bIsFiding)
+            //Dopóki nie znalazł elementu oraz dopóki rozmiar tablicy jest wiekszy lub równy odwiedzonym punktom
+            while (_bIsFiding && _iArraySize >= _uPoint)
             {
                 //Ustalenie miejsca punktu, który musi być przeszukiwany jako nastepny
                 if (_uClosed == 0)//Startowo punktem początkowym jest punkt startowy poszukiwań
@@ -156,7 +176,11 @@ namespace ObjectWorker
                 _uClosed++;
             }
 
-
+            //!!Komunikat w przypadku gdy nei znaleziono szukanego obiektu na całej planszyXD
+            if(!(_iArraySize >= _uPoint))
+            {
+                Console.WriteLine("Szukany obiekt nie istnieje!");
+            }
         }
 
         #endregion

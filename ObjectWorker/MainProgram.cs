@@ -6,13 +6,25 @@ namespace ObjectWorker
     {
         static void Main(string[] args)
         {
+            //Specyfikacja planszy
+            int _iSizeX = 60;
+            int _iSizeY = 15;
+            float _fFrequency = 5f;
+
+            #region Consol settings
+
+            //Kursor
             Console.CursorVisible = false;
 
+            //ustawienia okna konsoli
+            Console.WindowWidth = _iSizeX + 2;
+            Console.WindowHeight = _iSizeY + 3;
 
-            int _iSizeX = 24;
-            int _iSizeY = 6;
-            float _fFrequency = 0f;
+            //Ustawienia buffora
+            Console.BufferWidth = _iSizeX + 2;
+            Console.BufferHeight = _iSizeY + 3;
 
+            #endregion
 
             Forest forest = new Forest(_iSizeX, _iSizeY, _fFrequency);
 
