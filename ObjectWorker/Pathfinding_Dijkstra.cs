@@ -95,6 +95,9 @@ namespace ObjectWorker
                 //Dodanie punmtu do listy
                 this.Visited.Add(a_uPoint, point);
 
+                Console.SetCursorPosition(a_iX, a_iY);
+                Console.Write(a_uPoint);
+
                 //Zapisanie punktu na tablicy ściezki i przejście do nastepnego punktu (++)
                 this.PathBoard[a_iX, a_iY] = (int)a_uPoint++;
 

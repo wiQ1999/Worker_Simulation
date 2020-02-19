@@ -9,8 +9,8 @@ namespace ObjectWorker
         static void Main(string[] args)
         {
             //Specyfikacja planszy
-            int _iSizeX = 60;
-            int _iSizeY = 15;
+            int _iSizeX = 10;
+            int _iSizeY = 10;
             float _fFrequency = 1f;
 
             #region Consol settings
@@ -52,10 +52,11 @@ namespace ObjectWorker
                 {
                     break;
                 }
+                Console.SetCursorPosition(Path.Peek().X, Path.Peek().Y);
+                Console.Write("X");
+                //forest.TreesArray[Path.Peek().X, Path.Peek().Y, 0] = 0;
 
-                forest.TreesArray[Path.Peek().X, Path.Peek().Y, 0] = 0;
-
-                forest.DrawTrees();
+                //forest.DrawTrees();
             }
 
             Console.ReadKey();

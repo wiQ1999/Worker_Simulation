@@ -192,19 +192,19 @@ namespace ObjectWorker
             {
                 for (int y = 0; y < this.SizeY; y++)
                 {
-                    //Tylko elementy tablicy drzew które nie są puste
-                    if (this.TreesArray[x, y, 0] != 0)
+                    //Działanie na podstawie elementów tablicy (cyfr)
+                    switch (this.TreesArray[x, y, 0])
                     {
-                        //Działanie na podstawie elementów tablicy (cyfr)
-                        switch (this.TreesArray[x, y, 0])
-                        {
-                            case 1://Drzewo
-                                Console.SetCursorPosition(x + 1, y + 1);
-                                Console.BackgroundColor = ConsoleColor.DarkGreen;
-                                Console.Write(" ");
-                                Console.ResetColor();
-                                break;
-                        }
+                        case 1://Drzewo
+                            Console.SetCursorPosition(x + 1, y + 1);
+                            Console.BackgroundColor = ConsoleColor.DarkGreen;
+                            Console.Write(" ");
+                            Console.ResetColor();
+                            break;
+                        default:
+                            Console.SetCursorPosition(x + 1, y + 1);
+                            Console.Write(" ");
+                            break;
                     }
                 }
             }

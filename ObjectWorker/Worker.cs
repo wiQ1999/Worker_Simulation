@@ -27,7 +27,7 @@ namespace ObjectWorker
             //Deklaracja zmiennych
             this.Name = 'W';
             this.Power = 20;
-            this.Speed = 100;
+            this.Speed = 300;
             this.SizeX = x;
             this.SizeY = y;
             this.WorkersArray = new string[x, y, 1];
@@ -111,7 +111,7 @@ namespace ObjectWorker
             Stack<Point> Path = dijkstra.FindPath(this.PosX, this.PosY, a_oObjects, a_iSerch);
 
             //Dopóki w liście nie zostanie ostatnia wartość - szukany element
-            while (Path.Count > 1)
+            while (Path.Count > 0)
             {
                 WorkerMove(ref Path);
             }
@@ -124,7 +124,7 @@ namespace ObjectWorker
 
         public void DrowWorkers()
         {
-            Console.SetCursorPosition(this.PosX, this.PosY);
+            Console.SetCursorPosition(this.PosX + 1, this.PosY + 1);
             Console.Write(this.WorkersArray[this.PosX, this.PosY, 0]);
         }
 
