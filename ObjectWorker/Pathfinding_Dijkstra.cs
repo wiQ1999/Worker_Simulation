@@ -95,8 +95,10 @@ namespace ObjectWorker
                 //Dodanie punmtu do listy
                 this.Visited.Add(a_uPoint, point);
 
+                /*
                 Console.SetCursorPosition(a_iX, a_iY);
                 Console.Write(a_uPoint);
+                */
 
                 //Zapisanie punktu na tablicy ściezki i przejście do nastepnego punktu (++)
                 this.PathBoard[a_iX, a_iY] = (int)a_uPoint++;
@@ -121,38 +123,30 @@ namespace ObjectWorker
         /// <param name="a_iSearch">Searched object</param>
         public Stack<Point> FindPath(int a_iStartX, int a_iStartY, int[,,] a_oObjects, int a_iSearch)
         {
-            //Resetowanie list generycznej
-            //this.Visited = null;
-            //this.Path = null;
-
             //Deklaracja zmiennych
             int _iArrayPlaces = ((this.PathBoard.GetLength(0) - 2) * (this.PathBoard.GetLength(1) - 2)) - 1;//Określenie ilości maksymalnyhc punktów na planszy po której może poruszać się Worker
             a_iStartX += 1;//Przestawienie względem większej tablicy PathBoard
             a_iStartY += 1;
             uint _uClosed = 0;//Punkty zamknięte
-            uint _uPoint = 1;
+            uint _uPoint = 0;
             int _iX;
             int _iY;
             bool _bIsFiding = true;//Sprawdza czy metoda jeszcze nie znalazła szukanego obiektu
 
-            //Zapisanie miejsca startowego
+            //Zapisanie miejsca startowego na tablicy
             this.PathBoard[a_iStartX, a_iStartY] = 0;
+
+            //Zapisanie miejsca startowego w liscie generycznej
+            this.Visited.Add(_uPoint++, new Point { X = a_iStartX, Y = a_iStartY, Neighbor = 0 });
 
             //Główna pętla
             //Dopóki nie znalazł elementu oraz dopóki rozmiar tablicy jest wiekszy lub równy odwiedzonym punktom
             while (_bIsFiding && _iArrayPlaces >= _uPoint)
             {
                 //Ustalenie miejsca punktu, który musi być przeszukiwany jako nastepny
-                if (_uClosed == 0)//Startowo punktem początkowym jest punkt startowy poszukiwań
-                {
-                    _iX = a_iStartX;
-                    _iY = a_iStartY;
-                }
-                else//Sprawdzanie poprzedniego punktu zamkniętego i jego położenia
-                {
-                    _iX = Visited[_uClosed].X;
-                    _iY = Visited[_uClosed].Y;
-                }
+                //Sprawdzanie poprzedniego punktu zamkniętego i jego położenia
+                _iX = Visited[_uClosed].X;
+                _iY = Visited[_uClosed].Y;
 
                 //Przeszukanie sąsiednich miejsc punktu w 4 strony
                 for (int i = 0; i < 4; i++)
@@ -185,19 +179,16 @@ namespace ObjectWorker
             }
 
             //Tworzenie trasy po znalezieniu szukanego obiektu
-            if (_iArrayPlaces >= _uPoint)
+            if (_iArrayPlaces >= _uPoint--)//Zmniejszenie iteracji punktów o jeden by pozostać na ostatnim punkcie który został uzupełniony
             {
-                //Zmniejszenie zamknietych o jeden by pozostać na ostatnim punkcie który spotkał poszukiwany obiekt
-                _uClosed--;
-
                 //Tworzenie ścieżki w liście Stack
-                while (_uClosed >= 1)
+                while (_uPoint >= 1)
                 {
                     //Wstawianie elementów do listy
-                    this.Path.Push(this.Visited[_uClosed]);
+                    this.Path.Push(this.Visited[_uPoint]);
 
                     //Ustawianie poprzednika / sąsiada
-                    _uClosed = this.Visited[_uClosed].Neighbor;
+                    _uPoint = this.Visited[_uPoint].Neighbor;
                 }
             }
 

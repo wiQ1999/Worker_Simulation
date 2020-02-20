@@ -11,7 +11,7 @@ namespace ObjectWorker
             //Specyfikacja planszy
             int _iSizeX = 10;
             int _iSizeY = 10;
-            float _fFrequency = 1f;
+            float _fFrequency = 50f;
 
             #region Consol settings
 
@@ -39,24 +39,27 @@ namespace ObjectWorker
 
             worker.DrowWorkers();
 
-            //Ilość drzew do ścięcia
-            uint _uTrees = 5;
+            //Console.ReadKey();
 
-            //Za każdym razem zmniejsza ilość drzew o 1
-            while (_uTrees-- > 0)
+            //Ścinanie drzew w nieskończoność
+            while (true)
             {
                 Stack<Point> Path = worker.TreeCutting(forest.TreesArray, 1);
 
-                //W przypadku gdy nie znaleziono obiektu na planszy oraz ścieżki do niego~~!!
-                if (Path == null)
+                //W przypadku gdy nie znaleziono obiektu na planszy oraz ścieżki do niego ~~ niedopracowane!!
+                if (Path.Count == 0)
                 {
                     break;
                 }
-                Console.SetCursorPosition(Path.Peek().X, Path.Peek().Y);
-                Console.Write("X");
-                //forest.TreesArray[Path.Peek().X, Path.Peek().Y, 0] = 0;
 
-                //forest.DrawTrees();
+                Console.SetCursorPosition(Path.Peek().X, Path.Peek().Y);
+                Console.Write(" ");
+                forest.TreesArray[Path.Peek().X - 1, Path.Peek().Y - 1, 0] = 0;
+
+                //Zasymulowanie chwili przerwy po ścięciu drzewa
+                Thread.Sleep(500);
+
+                //Regeneracja drzew ~~ ToDo
             }
 
             Console.ReadKey();

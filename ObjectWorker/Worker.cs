@@ -27,7 +27,7 @@ namespace ObjectWorker
             //Deklaracja zmiennych
             this.Name = 'W';
             this.Power = 20;
-            this.Speed = 300;
+            this.Speed = 800;
             this.SizeX = x;
             this.SizeY = y;
             this.WorkersArray = new string[x, y, 1];
@@ -62,10 +62,10 @@ namespace ObjectWorker
 
         #region Methods
 
-        private void WorkerInteraction()
+        public void WorkerInteraction()
         {
             //Czas przeznaczony na interakcje z obiektem
-            Thread.Sleep(this.Power * this.Speed);
+            Thread.Sleep(this.Power / this.Speed * 50);
         }
 
         private void WorkerMove(ref Stack<Point> a_Path)
@@ -77,7 +77,7 @@ namespace ObjectWorker
             var _vPoint = a_Path.Pop();
 
             //Ustawienie aktualnego miejsca Worker'a
-            Console.SetCursorPosition(this.PosX, this.PosY);
+            Console.SetCursorPosition(this.PosX + 1, this.PosY + 1);
 
             //Usunięcie Worker'a ze aktualnego miejsca
             Console.Write(" ");
@@ -89,8 +89,8 @@ namespace ObjectWorker
             Console.Write(this.Name);
 
             //Aktualizacja globalnej zmiennej pozycji Worker'a
-            this.PosX = _vPoint.X;
-            this.PosY = _vPoint.Y;
+            this.PosX = _vPoint.X - 1;
+            this.PosY = _vPoint.Y - 1;
 
             //Wartość tylko do odczytu czasu który minął na wykonanie operacji
             TimeSpan Now = DateTime.Now - Date;
@@ -111,14 +111,12 @@ namespace ObjectWorker
             Stack<Point> Path = dijkstra.FindPath(this.PosX, this.PosY, a_oObjects, a_iSerch);
 
             //Dopóki w liście nie zostanie ostatnia wartość - szukany element
-            while (Path.Count > 0)
+            while (Path.Count > 1)
             {
                 WorkerMove(ref Path);
             }
 
-            //Inerakcja Worker'a z szukanym elementem
-            WorkerInteraction();
-
+            //Zwracanie ostatniego miejsca w liście
             return Path;
         }
 

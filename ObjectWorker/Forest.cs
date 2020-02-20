@@ -201,10 +201,6 @@ namespace ObjectWorker
                             Console.Write(" ");
                             Console.ResetColor();
                             break;
-                        default:
-                            Console.SetCursorPosition(x + 1, y + 1);
-                            Console.Write(" ");
-                            break;
                     }
                 }
             }
