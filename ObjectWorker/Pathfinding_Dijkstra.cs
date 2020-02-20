@@ -153,17 +153,17 @@ namespace ObjectWorker
                 {
                     switch (i)
                     {
-                        case 0://Góra
-                            _bIsFiding = PointAnalysis(_iX, _iY - 1, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
-                            break;
-                        case 1://Dół
-                            _bIsFiding = PointAnalysis(_iX, _iY + 1, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
-                            break;
                         case 2://Prawo
                             _bIsFiding = PointAnalysis(_iX + 1, _iY, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
                             break;
                         case 3://Lewo
                             _bIsFiding = PointAnalysis(_iX - 1, _iY, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
+                            break;
+                        case 0://Góra
+                            _bIsFiding = PointAnalysis(_iX, _iY - 1, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
+                            break;
+                        case 1://Dół
+                            _bIsFiding = PointAnalysis(_iX, _iY + 1, _uClosed, ref _uPoint, a_oObjects, a_iSearch);
                             break;
                     }
 

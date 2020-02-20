@@ -9,7 +9,7 @@ namespace ObjectWorker
     {
         #region Properties
 
-        public string[,,] WorkersArray { get; set; }
+        //public string[,,] WorkersArray { get; set; }
         public char Name { get; set; }
         public int Power { get; set; }
         public int Speed { get; set; }
@@ -27,10 +27,10 @@ namespace ObjectWorker
             //Deklaracja zmiennych
             this.Name = 'W';
             this.Power = 20;
-            this.Speed = 800;
+            this.Speed = 20;
             this.SizeX = x;
             this.SizeY = y;
-            this.WorkersArray = new string[x, y, 1];
+            //this.WorkersArray = new string[x, y, 1];
 
             //Obiekt randomowy
             Random rnd = new Random();
@@ -41,7 +41,7 @@ namespace ObjectWorker
                 int _iRandomX = rnd.Next(0, x);
                 int _iRandomY = rnd.Next(0, y);
 
-                if (this.WorkersArray[_iRandomX, _iRandomY, 0] != string.Empty && a_oTreesArray[_iRandomX, _iRandomY, 0] != 0)//Jeżeli miejsce jest zajęte
+                if (a_oTreesArray[_iRandomX, _iRandomY, 0] != 0)//Jeżeli miejsce jest zajęte
                 {
                     continue;
                 }
@@ -51,7 +51,7 @@ namespace ObjectWorker
                 this.PosY = _iRandomY;
 
                 //Przypisanie pracownika na tablicę
-                this.WorkersArray[_iRandomX, _iRandomY, 0] = this.Name.ToString();
+                //this.WorkersArray[_iRandomX, _iRandomY, 0] = this.Name.ToString();
 
                 //Przerwanie pętli
                 break;
@@ -65,7 +65,7 @@ namespace ObjectWorker
         public void WorkerInteraction()
         {
             //Czas przeznaczony na interakcje z obiektem
-            Thread.Sleep(this.Power / this.Speed * 50);
+            Thread.Sleep(50000 / (this.Speed + this.Power));
         }
 
         private void WorkerMove(ref Stack<Point> a_Path)
@@ -96,10 +96,10 @@ namespace ObjectWorker
             TimeSpan Now = DateTime.Now - Date;
 
             //Sprawdzanie czy wykonano operacje szybciej niż wartość szybkości Worker'a
-            if(Now.Milliseconds < this.Speed)
+            if(Now.Milliseconds < 20000 / this.Speed)
             {
-                //Oczekiwanie (szybkość Workera - czas wykonania operacji)
-                Thread.Sleep(this.Speed - Now.Milliseconds);
+                //Oczekiwanie (szybkość Workera - czas poruszania się)
+                Thread.Sleep((20000 / this.Speed) - Now.Milliseconds);
             }
         }
 
@@ -120,10 +120,10 @@ namespace ObjectWorker
             return Path;
         }
 
-        public void DrowWorkers()
+        public void DrowWorker()
         {
             Console.SetCursorPosition(this.PosX + 1, this.PosY + 1);
-            Console.Write(this.WorkersArray[this.PosX, this.PosY, 0]);
+            Console.Write(this.Name);
         }
 
         #endregion
