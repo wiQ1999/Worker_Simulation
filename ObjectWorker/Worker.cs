@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace ObjectWorker
@@ -9,14 +8,34 @@ namespace ObjectWorker
     {
         #region Properties
 
-        //public string[,,] WorkersArray { get; set; }
-        public char Name { get; set; }
-        public int Power { get; set; }
+        /// <summary>
+        /// A char specifying a worker
+        /// </summary>
+        private char Name { get; set; }
+        /// <summary>
+        /// Power value reduce time of his job. It tells how strong is the worker
+        /// </summary>
+        private int Power { get; set; }
+        /// <summary>
+        /// Speed value reduce time of his job and movement. It tells how fast is the worker
+        /// </summary>
         public int Speed { get; set; }
-        public int PosX { get; set; }
-        public int PosY { get; set; }
-        public int SizeX { get; set; }
-        public int SizeY { get; set; }
+        /// <summary>
+        /// Worker X position on a main board
+        /// </summary>
+        private int PosX { get; set; }
+        /// <summary>
+        /// Worker Y position on a main board
+        /// </summary>
+        private int PosY { get; set; }
+        /// <summary>
+        /// Size X of main board
+        /// </summary>
+        private int SizeX { get; set; }
+        /// <summary>
+        /// Size Y of main board
+        /// </summary>
+        private int SizeY { get; set; }
 
         #endregion
 
@@ -26,11 +45,10 @@ namespace ObjectWorker
         {
             //Deklaracja zmiennych
             this.Name = 'W';
-            this.Power = 20;
-            this.Speed = 20;
+            this.Power = 30;
+            this.Speed = 50;
             this.SizeX = x;
             this.SizeY = y;
-            //this.WorkersArray = new string[x, y, 1];
 
             //Obiekt randomowy
             Random rnd = new Random();
@@ -50,9 +68,6 @@ namespace ObjectWorker
                 this.PosX = _iRandomX;
                 this.PosY = _iRandomY;
 
-                //Przypisanie pracownika na tablicę
-                //this.WorkersArray[_iRandomX, _iRandomY, 0] = this.Name.ToString();
-
                 //Przerwanie pętli
                 break;
             }
@@ -62,12 +77,19 @@ namespace ObjectWorker
 
         #region Methods
 
+        /// <summary>
+        /// Worker interaction with object
+        /// </summary>
         public void WorkerInteraction()
         {
             //Czas przeznaczony na interakcje z obiektem
             Thread.Sleep(50000 / (this.Speed + this.Power));
         }
 
+        /// <summary>
+        /// Worker movement
+        /// </summary>
+        /// <param name="a_Path">List of points to serching object</param>
         private void WorkerMove(ref Stack<Point> a_Path)
         {
             //Zczytanie aktualnego czasu
@@ -103,16 +125,24 @@ namespace ObjectWorker
             }
         }
 
+        /// <summary>
+        /// Method that responds to given path
+        /// </summary>
+        /// <param name="a_oObjects">Array of searching items</param>
+        /// <param name="a_iSerch">Serching item</param>
+        /// <returns>Last point in path</returns>
         public Stack<Point> TreeCutting(int[,,] a_oObjects, int a_iSerch)
         {
-
+            //Twrzenie obiektu pathfindingu
             Dijkstra dijkstra = new Dijkstra(this.SizeX, this.SizeY);
 
+            //Twrzenie kolejki punktów
             Stack<Point> Path = dijkstra.FindPath(this.PosX, this.PosY, a_oObjects, a_iSerch);
 
             //Dopóki w liście nie zostanie ostatnia wartość - szukany element
             while (Path.Count > 1)
             {
+                //Ruch Worker'a
                 WorkerMove(ref Path);
             }
 
@@ -120,6 +150,9 @@ namespace ObjectWorker
             return Path;
         }
 
+        /// <summary>
+        /// Draws worker on a specified position
+        /// </summary>
         public void DrowWorker()
         {
             Console.SetCursorPosition(this.PosX + 1, this.PosY + 1);
